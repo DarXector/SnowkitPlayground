@@ -26,6 +26,12 @@ class Main extends luxe.Game
         Luxe.input.bind_key('right', Key.right);
         Luxe.input.bind_key('right', Key.key_d);
 		
+		Luxe.input.bind_key('up', Key.up);
+        Luxe.input.bind_key('up', Key.key_w);
+
+        Luxe.input.bind_key('down', Key.down);
+        Luxe.input.bind_key('down', Key.key_s);
+		
 		sixPrinciplesOfDepth = new SixPrinciplesOfDepth('six principles of depth scene');
 	}
 

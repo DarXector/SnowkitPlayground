@@ -7,6 +7,8 @@ import luxe.Scene;
 import luxe.Sprite;
 import luxe.Vector;
 import phoenix.geometry.Geometry;
+import spod.entities.Runner;
+import spod.entities.Snowman;
 
 import luxe.utils.Random;
 
@@ -23,7 +25,7 @@ class SixPrinciplesOfDepth extends Scene
 	
 	override function init(_)
 	{		
-		var random = new Random(123);
+		var random = new Random(1234);
 		
 		var background = new Sprite({
 			name: "background",
@@ -35,25 +37,28 @@ class SixPrinciplesOfDepth extends Scene
 		var runner1 = new Runner({
             name : "runner1",
 			texture : Luxe.resources.texture('assets/run_cycle.png'),
-			pos : new Vector( Luxe.screen.w/2, Luxe.screen.h/2 ),
+			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 64 ),
+			origin : new Vector(64, 128),
 			size : new Vector(128,128)
 		});
 		
 		var runner2 = new Runner({
             name : "runner2",
 			texture : Luxe.resources.texture('assets/run_cycle.png'),
-			pos : new Vector( Luxe.screen.w/2, Luxe.screen.h/2 - 100 ),
+			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 192 ),
+			origin : new Vector(64, 128),
 			size : new Vector(128,128)
 		});
 		
-		for (i in 1...16) 
+		for (i in 1...20) 
 		{
-			var snowman = new Snowman( {
+			var snowman = new Snowman({
 				name : "snowman"+i,
 				texture : Luxe.resources.texture('assets/snow_assets.png'),
-				pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3, Luxe.screen.h) ),
-				geometry: Luxe.draw.plane( { uv: new Rectangle( 0, 0, 512, 512 ) } ),
-				size : new Vector(512,512)
+				pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3 + 64, Luxe.screen.h) ),
+				uv: new Rectangle( 60, 160, 135, 180 ),
+				size : new Vector(135, 180),
+				origin : new Vector(67, 180)
 			});
 		}
 		
