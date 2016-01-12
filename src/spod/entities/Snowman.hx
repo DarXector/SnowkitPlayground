@@ -2,7 +2,7 @@ package spod.entities;
 
 import luxe.options.SpriteOptions;
 import luxe.Sprite;
-import spod.components.DepthManager;
+import spod.components.depth.DepthManager;
 
 import hxmath.math.MathUtil;
 
@@ -21,6 +21,13 @@ class Snowman extends Sprite
 	{		
 		this.pos.y = MathUtil.clamp(this.pos.y, Luxe.screen.h / 3, Luxe.screen.h);
 		
-		this.add(new DepthManager({name: "depth_manager"}));
+		this.add(new DepthManager( {
+				name: "depth_manager", 
+				horizonY: Luxe.screen.h / 3,
+				scale: true,
+				overlap: true,
+				minScale: 0.25,
+				maxScale: 1
+			}));
 	}
 }
