@@ -29,14 +29,14 @@ class SixPrinciplesOfDepth extends Scene
 
 		var background = new Sprite({
 			name: "background",
-			texture: Luxe.resources.texture('assets/background.png'),
+			texture: Luxe.resources.texture('assets/textures/background.png'),
 			pos : new Vector( Luxe.screen.w/2, Luxe.screen.h/2 ),
 			size: Luxe.screen.size
 		});
 
 		var runner1 = new Runner({
 			name : "runner1",
-			texture : Luxe.resources.texture('assets/run_cycle.png'),
+			texture : Luxe.resources.texture('assets/textures/run_cycle.png'),
 			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 64 ),
 			origin : new Vector(64, 128),
 			size : new Vector(128,128)
@@ -44,7 +44,7 @@ class SixPrinciplesOfDepth extends Scene
 
 		var runner2 = new Runner({
 			name : "runner2",
-			texture : Luxe.resources.texture('assets/run_cycle.png'),
+			texture : Luxe.resources.texture('assets/textures/run_cycle.png'),
 			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 192 ),
 			origin : new Vector(64, 128),
 			size : new Vector(128,128)
@@ -54,7 +54,7 @@ class SixPrinciplesOfDepth extends Scene
 		{
 			var snowman = new Snowman({
 				name : "snowman"+i,
-				texture : Luxe.resources.texture('assets/snow_assets.png'),
+				texture : Luxe.resources.texture('assets/textures/snow_assets.png'),
 				pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3 + 64, Luxe.screen.h) ),
 				uv: new Rectangle( 60, 160, 135, 180 ),
 				size : new Vector(135, 180),

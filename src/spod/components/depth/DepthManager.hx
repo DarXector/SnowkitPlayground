@@ -1,7 +1,9 @@
 package spod.components.depth;
 
+import luxe.Color;
 import luxe.Component;
 import luxe.options.ComponentOptions;
+import phoenix.Shader;
 import spod.components.depth.DepthOptions;
 import luxe.Sprite;
 import luxe.Vector;
@@ -26,6 +28,14 @@ class DepthManager extends Component
 	var _maxScale:Float = 1;
 	var _originalOrigin:Vector;
 	var _originalSize:Vector;
+	
+	var _updateColor:Bool;
+	var _updateColorAlpha:Bool;
+	var _minColorModifier:Float = 0.1;
+	var _maxColorModifier:Float = 1;
+	
+	var _blurShader:Shader;
+	var _updateBlur:Bool;
 
 	public function new(_options:DepthOptions)
 	{
@@ -46,6 +56,20 @@ class DepthManager extends Component
 			_maxScale = _options.maxScale;
 		}
 		
+		if (_options.color != null || _options.colorAlpha != null) 
+		{
+			_updateColor = !!_options.color;
+			_updateColorAlpha = !!_options.colorAlpha;
+			_minColorModifier = _options.minColorModifier;
+			_maxColorModifier = _options.maxColorModifier;
+		}
+		
+		if (_options.blur) 
+		{
+			_updateBlur = _options.blur;
+			_blurShader = Luxe.resources.shader('blur');
+		}
+		
 		super(_options);
 	}
 
@@ -59,6 +83,12 @@ class DepthManager extends Component
 			{
 				_originalOrigin = new Vector(view.origin.x, view.origin.y);
 				_originalSize = new Vector(view.size.x, view.size.y);
+			}
+			
+			if (_updateBlur)
+			{
+				view.shader = _blurShader;
+				_blurShader.set_vector2("dir", new Vector(1.0, 0.0));
 			}
 			
 			_updateDepth();
@@ -88,9 +118,30 @@ class DepthManager extends Component
 		
 		if (_updateScale)
 		{
-			var scale = _minScale + (destDepth * (_maxScale - _minScale));
-			view.size = new Vector(_originalSize.x * scale, _originalSize.y * scale);
-			view.origin = new Vector(_originalOrigin.x * scale, _originalOrigin.y * scale);
+			var depthScale = _minScale + (destDepth * (_maxScale - _minScale));
+			view.size = new Vector(_originalSize.x * depthScale, _originalSize.y * depthScale);
+			view.origin = new Vector(_originalOrigin.x * depthScale, _originalOrigin.y * depthScale);
+		}
+		
+		if (_updateColor || _updateColorAlpha)
+		{
+			var depthColorModifier = _minColorModifier + (destDepth * (_maxColorModifier - _minColorModifier));
+			var depthColor:Color = new Color(1, 1, 1, 1);
+			if (_updateColor) 
+			{
+				depthColor = new Color(depthColorModifier, depthColorModifier, depthColorModifier);
+			}
+			if (_updateColorAlpha)
+			{
+				depthColor.a = depthColorModifier;
+			}
+			
+			view.color = depthColor;
+		}
+		
+		if (_updateBlur)
+		{
+			
 		}
 	}
 }

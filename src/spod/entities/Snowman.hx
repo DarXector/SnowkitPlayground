@@ -27,7 +27,10 @@ class Snowman extends Sprite
 				scale: true,
 				overlap: true,
 				minScale: 0.25,
-				maxScale: 1
+				maxScale: 1,
+				colorAlpha: true,
+				minColorModifier: 0.25,
+				maxColorModifier: 1
 			}));
 	}
 }
