@@ -19,8 +19,6 @@ typedef DepthOptions = {
 	
 	@:optional var color:Bool;
 	
-	@:optional var colorAlpha:Bool;
-	
 	@:optional var minColorModifier:Float;
 	
 	@:optional var maxColorModifier:Float;

@@ -40,9 +40,7 @@ class Runner extends Sprite
 				overlap: true,
 				minScale: 0.25,
 				maxScale: 1,
-				colorAlpha: true,
-				minColorModifier: 0.25,
-				maxColorModifier: 1
+				blur: true
 			}));
 	}
 

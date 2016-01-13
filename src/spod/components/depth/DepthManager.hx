@@ -30,7 +30,6 @@ class DepthManager extends Component
 	var _originalSize:Vector;
 	
 	var _updateColor:Bool;
-	var _updateColorAlpha:Bool;
 	var _minColorModifier:Float = 0.1;
 	var _maxColorModifier:Float = 1;
 	
@@ -56,15 +55,14 @@ class DepthManager extends Component
 			_maxScale = _options.maxScale;
 		}
 		
-		if (_options.color != null || _options.colorAlpha != null) 
+		if (_options.color != null) 
 		{
-			_updateColor = !!_options.color;
-			_updateColorAlpha = !!_options.colorAlpha;
+			_updateColor = _options.color;
 			_minColorModifier = _options.minColorModifier;
 			_maxColorModifier = _options.maxColorModifier;
 		}
 		
-		if (_options.blur) 
+		if (_options.blur != null) 
 		{
 			_updateBlur = _options.blur;
 			_blurShader = Luxe.resources.shader('blur');
@@ -88,7 +86,6 @@ class DepthManager extends Component
 			if (_updateBlur)
 			{
 				view.shader = _blurShader;
-				_blurShader.set_vector2("dir", new Vector(1.0, 0.0));
 			}
 			
 			_updateDepth();
@@ -123,7 +120,7 @@ class DepthManager extends Component
 			view.origin = new Vector(_originalOrigin.x * depthScale, _originalOrigin.y * depthScale);
 		}
 		
-		if (_updateColor || _updateColorAlpha)
+		if (_updateColor)
 		{
 			var depthColorModifier = _minColorModifier + (destDepth * (_maxColorModifier - _minColorModifier));
 			var depthColor:Color = new Color(1, 1, 1, 1);
@@ -131,17 +128,18 @@ class DepthManager extends Component
 			{
 				depthColor = new Color(depthColorModifier, depthColorModifier, depthColorModifier);
 			}
-			if (_updateColorAlpha)
-			{
-				depthColor.a = depthColorModifier;
-			}
 			
 			view.color = depthColor;
 		}
 		
 		if (_updateBlur)
 		{
-			
+			if (view.name == "runner1")
+			{
+				trace("destDepth : " + destDepth);
+			}
+			_blurShader.set_float("u_strength", 1 - destDepth);
+			view.shader = _blurShader;
 		}
 	}
 }
