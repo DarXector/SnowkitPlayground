@@ -2,6 +2,8 @@ package spod.components.depth;
 
 import luxe.options.ComponentOptions;
 import phoenix.Shader;
+import luxe.Color;
+
 
 typedef DepthOptions = {
 
@@ -17,11 +19,13 @@ typedef DepthOptions = {
 	
     @:optional var maxScale : Float;
 	
-	@:optional var color:Bool;
+	@:optional var color:Color;
 	
-	@:optional var minColorModifier:Float;
+	@:optional var brightness:Bool;
 	
-	@:optional var maxColorModifier:Float;
+	@:optional var minBrightness:Float;
+	
+	@:optional var maxBrightness:Float;
 	
 	@:optional var blur:Bool;
 

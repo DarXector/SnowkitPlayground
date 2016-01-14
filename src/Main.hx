@@ -14,7 +14,7 @@ class Main extends luxe.Game
 		config.preload.textures.push({ id:'assets/textures/run_cycle.png' });
 		config.preload.textures.push( { id:'assets/textures/snow_assets.png' } );
 		
-		config.preload.shaders.push({ id:'blur', frag_id:'assets/shaders/blur_frag.glsl', vert_id:'default' });
+		config.preload.shaders.push({ id:'depth', frag_id:'assets/shaders/depth_frag.glsl', vert_id:'default' });
 
 		return config;
 	} //config

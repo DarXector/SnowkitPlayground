@@ -14,8 +14,6 @@ import luxe.Vector;
  */
 class DepthManager extends Component
 {
-	var destDepth:Float = 0;
-
 	var _horizonY: Float = 0;
 	
 	var view:Sprite;
@@ -24,16 +22,19 @@ class DepthManager extends Component
 	
 	var _updateScale:Bool;
 	
-	var _minScale:Float = 0;
+	var _minScale:Float = 0.3;
 	var _maxScale:Float = 1;
 	var _originalOrigin:Vector;
 	var _originalSize:Vector;
 	
 	var _updateColor:Bool;
-	var _minColorModifier:Float = 0.1;
-	var _maxColorModifier:Float = 1;
+	var _targetColor:Color;
 	
-	var _blurShader:Shader;
+	var _updateBrightness:Bool;
+	var _minBrightness:Float = 0.1;
+	var _maxBrightness:Float = 1;
+	
+	var _depthShader:Shader;
 	var _updateBlur:Bool;
 
 	public function new(_options:DepthOptions)
@@ -51,21 +52,39 @@ class DepthManager extends Component
 		if (_options.scale != null) 
 		{
 			_updateScale = _options.scale;
-			_minScale = _options.minScale;
-			_maxScale = _options.maxScale;
+			if (_options.minScale != null)
+			{
+				_minScale = _options.minScale;
+			}
+			if (_options.maxScale != null)
+			{
+				_maxScale = _options.maxScale;
+			}
 		}
 		
 		if (_options.color != null) 
 		{
-			_updateColor = _options.color;
-			_minColorModifier = _options.minColorModifier;
-			_maxColorModifier = _options.maxColorModifier;
+			_updateColor = (_options.color != null);
+			_targetColor = _options.color;
+		}
+		
+		if (_options.brightness != null) 
+		{
+			_updateBrightness = _options.brightness;
+			
+			if (_options.minBrightness != null)
+			{
+				_minBrightness = _options.minBrightness;
+			}
+			if (_options.maxBrightness != null)
+			{
+				_maxBrightness = _options.maxBrightness;
+			}
 		}
 		
 		if (_options.blur != null) 
 		{
 			_updateBlur = _options.blur;
-			_blurShader = Luxe.resources.shader('blur');
 		}
 		
 		super(_options);
@@ -83,9 +102,19 @@ class DepthManager extends Component
 				_originalSize = new Vector(view.size.x, view.size.y);
 			}
 			
-			if (_updateBlur)
+			if (_updateBlur || _updateBrightness || _updateColor)
 			{
-				view.shader = _blurShader;
+				_depthShader = Luxe.resources.shader('depth').clone("depth_" + view.name);
+				
+				_depthShader.set_vector2("u_dir", new Vector(1.0, 0.0));
+				
+				_depthShader.set_float("u_blur", 0.0);
+				
+				_depthShader.set_vector3("u_color", new Vector(0.0, 0.0, 0.0));
+				
+				_depthShader.set_float("u_brightness", 0.0);
+				
+				view.shader = _depthShader;
 			}
 			
 			_updateDepth();
@@ -106,7 +135,8 @@ class DepthManager extends Component
 		if (view == null)
 			return;
 
-		destDepth = (entity.pos.y - _horizonY) / (Luxe.screen.h - _horizonY);
+		var destDepth = (entity.pos.y - _horizonY) / (Luxe.screen.h - _horizonY);
+		var destDepthSqrt = Math.sqrt((entity.pos.y - _horizonY) / (Luxe.screen.h - _horizonY));
 
 		if (_updateOverlap)
 		{
@@ -122,24 +152,23 @@ class DepthManager extends Component
 		
 		if (_updateColor)
 		{
-			var depthColorModifier = _minColorModifier + (destDepth * (_maxColorModifier - _minColorModifier));
-			var depthColor:Color = new Color(1, 1, 1, 1);
-			if (_updateColor) 
-			{
-				depthColor = new Color(depthColorModifier, depthColorModifier, depthColorModifier);
-			}
+			var depthColorModifier = 1 - destDepthSqrt;
 			
-			view.color = depthColor;
+			_depthShader.set_vector3("u_color", new Vector(depthColorModifier * _targetColor.r, depthColorModifier * _targetColor.g, depthColorModifier * _targetColor.b));
+		}
+		
+		if (_updateBrightness)
+		{
+			var depthBrightnessModifier = _minBrightness + ((1 - destDepthSqrt) * (_maxBrightness - _minBrightness));
+			
+			trace("depthBrightnessModifier " + depthBrightnessModifier);
+			
+			_depthShader.set_float("u_brightness", depthBrightnessModifier);
 		}
 		
 		if (_updateBlur)
 		{
-			if (view.name == "runner1")
-			{
-				trace("destDepth : " + destDepth);
-			}
-			_blurShader.set_float("u_strength", 1 - destDepth);
-			view.shader = _blurShader;
+			_depthShader.set_float("u_blur", (1.0 - destDepthSqrt) / 1000);
 		}
 	}
 }

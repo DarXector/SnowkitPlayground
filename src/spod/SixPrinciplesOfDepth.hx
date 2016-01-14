@@ -25,7 +25,7 @@ class SixPrinciplesOfDepth extends Scene
 
 	override function init(_)
 	{
-		var random = new Random(1234);
+		var random = new Random(10);
 
 		var background = new Sprite({
 			name: "background",
@@ -35,18 +35,10 @@ class SixPrinciplesOfDepth extends Scene
 		});
 
 		var runner1 = new Runner({
-			name : "runner1",
+			name : "runner",
 			texture : Luxe.resources.texture('assets/textures/run_cycle.png'),
 			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 64 ),
-			origin : new Vector(64, 128),
-			size : new Vector(128,128)
-		});
-
-		var runner2 = new Runner({
-			name : "runner2",
-			texture : Luxe.resources.texture('assets/textures/run_cycle.png'),
-			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 192 ),
-			origin : new Vector(64, 128),
+			origin : new Vector(64, 110),
 			size : new Vector(128,128)
 		});
 
@@ -58,7 +50,7 @@ class SixPrinciplesOfDepth extends Scene
 				pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3 + 64, Luxe.screen.h) ),
 				uv: new Rectangle( 60, 160, 135, 180 ),
 				size : new Vector(135, 180),
-				origin : new Vector(67, 180)
+				origin : new Vector(67, 170)
 			});
 		}
 
