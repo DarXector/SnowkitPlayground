@@ -35,7 +35,9 @@ class DepthManager extends Component
 	var _maxBrightness:Float = 1;
 	
 	var _depthShader:Shader;
+	
 	var _updateBlur:Bool;
+	var _blurModifier:Float = 1;
 
 	public function new(_options:DepthOptions)
 	{
@@ -85,6 +87,10 @@ class DepthManager extends Component
 		if (_options.blur != null) 
 		{
 			_updateBlur = _options.blur;
+			if (_options.blurModifier != null)
+			{
+				_blurModifier = _options.blurModifier;
+			}
 		}
 		
 		super(_options);
@@ -168,7 +174,7 @@ class DepthManager extends Component
 		
 		if (_updateBlur)
 		{
-			_depthShader.set_float("u_blur", (1.0 - destDepthSqrt) / 1000);
+			_depthShader.set_float("u_blur", _blurModifier * (1.0 - destDepthSqrt) / 1000);
 		}
 	}
 }
