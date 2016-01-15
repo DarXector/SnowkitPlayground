@@ -37,7 +37,7 @@ class DepthManager extends Component
 	var _depthShader:Shader;
 	
 	var _updateBlur:Bool;
-	var _blurModifier:Float = 1;
+	var _blurModifier:Float = 0;
 
 	public function new(_options:DepthOptions)
 	{
@@ -86,11 +86,8 @@ class DepthManager extends Component
 		
 		if (_options.blur != null) 
 		{
-			_updateBlur = _options.blur;
-			if (_options.blurModifier != null)
-			{
-				_blurModifier = _options.blurModifier;
-			}
+			_updateBlur = (_options.blur != null);
+			_blurModifier = _options.blur;
 		}
 		
 		super(_options);

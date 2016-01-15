@@ -15,9 +15,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\HaxeToolkit\haxe\lib\luxe\git" />
-    <class path="C:\HaxeToolkit\haxe\lib\hxmath\0,13,0" />
-    <class path="C:\HaxeToolkit\haxe\lib\snow\git" />
+    <class path="D:\HaxeToolkit\haxe\lib\luxe\git" />
+    <class path="D:\HaxeToolkit\haxe\lib\hxmath\0,13,0" />
+    <class path="D:\HaxeToolkit\haxe\lib\snow\git" />
     <class path="src" />
     <class path="bin\web.build\haxe" />
   </classpaths>

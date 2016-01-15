@@ -39,8 +39,7 @@ class Snowman extends Sprite
 			
 			color: new Color(0.8, 0.89, 1),
 			
-			blur: true,
-			blurModifier: 4
+			blur: 8,
 		}));
 	}
 }

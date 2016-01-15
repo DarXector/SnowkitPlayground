@@ -27,8 +27,6 @@ typedef DepthOptions = {
 	
 	@:optional var maxBrightness:Float;
 	
-	@:optional var blur:Bool;
-	
-	@:optional var blurModifier:Float;
+	@:optional var blur:Float;
 
 } //DepthOptions
