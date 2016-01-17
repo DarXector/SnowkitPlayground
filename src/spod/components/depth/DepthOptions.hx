@@ -3,6 +3,7 @@ package spod.components.depth;
 import luxe.options.ComponentOptions;
 import phoenix.Shader;
 import luxe.Color;
+import luxe.Vector;
 
 
 typedef DepthOptions = {
@@ -11,13 +12,17 @@ typedef DepthOptions = {
 
     @:optional var overlap : Bool;
 	
-    @:optional var horizonY : Float;
+    @:optional var focalY : Float;
 
     @:optional var scale : Bool;
 	
     @:optional var minScale : Float;
 	
     @:optional var maxScale : Float;
+	
+	@:optional var parallax:Bool;
+	
+	@:optional var camerPosition:Vector;
 	
 	@:optional var color:Color;
 	
@@ -28,5 +33,4 @@ typedef DepthOptions = {
 	@:optional var maxBrightness:Float;
 	
 	@:optional var blur:Float;
-
 } //DepthOptions

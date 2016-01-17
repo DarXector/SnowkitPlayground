@@ -37,21 +37,32 @@ class SixPrinciplesOfDepth extends Scene
 		var runner1 = new Runner({
 			name : "runner",
 			texture : Luxe.resources.texture('assets/textures/run_cycle.png'),
-			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h / 2 + 64 ),
+			pos : new Vector( Luxe.screen.w / 2, Luxe.screen.h - 128 ),
 			origin : new Vector(64, 110),
 			size : new Vector(128,128)
 		});
 
-		for (i in 1...20)
+		var posX:Float = 50;
+		var posY:Float = Luxe.screen.h - 50;
+		
+		for (i in 1...30)
 		{
 			var snowman = new Snowman({
 				name : "snowman"+i,
 				texture : Luxe.resources.texture('assets/textures/snow_assets.png'),
-				pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3 + 64, Luxe.screen.h) ),
+				//pos : new Vector( random.float(0, Luxe.screen.w), random.float(Luxe.screen.h / 3 + 64, Luxe.screen.h) ),
+				pos : new Vector( posX, posY ),
 				uv: new Rectangle( 60, 160, 135, 180 ),
 				size : new Vector(135, 180),
 				origin : new Vector(67, 170)
 			});
+			
+			posX += 200;
+			if (i != 0 && i % 5 == 0)
+			{
+				posY -= 80;
+				posX = 50;
+			}
 		}
 
 		super.init(_);

@@ -1,0 +1,155 @@
+package spod.components.mover;
+
+import hxmath.math.MathUtil;
+import luxe.Component;
+import luxe.Sprite;
+import phoenix.Vector;
+import spod.components.mover.MoverOptions;
+
+/**
+ * ...
+ * @author Marko Ristic
+ */
+class Mover extends Component
+{
+	var _view:Sprite;
+	
+	var _maxLeft : Float = 0;
+	var _maxRight : Float = 0;
+	var _maxUp : Float = 0;
+	var _maxDown : Float = 0;
+	var _friction : Float = 1;
+	
+	var _acceleration: Vector;
+	var _maxVelocity: Vector;
+	
+	@:isVar public var velocity(get, set): Vector = new Vector(0, 0);
+	@:isVar public var moving(get, null): Bool;
+
+	public function new(?_options:MoverOptions) 
+	{
+		
+		if (_options.acceleration != null) 
+		{
+			_acceleration = _options.acceleration;
+		}
+		
+		if (_options.maxVelocity != null) 
+		{
+			_maxVelocity = _options.maxVelocity;
+		}
+		
+		if (_options.maxRight != null) 
+		{
+			_maxRight = _options.maxRight;
+		}
+		
+		if (_options.maxLeft != null) 
+		{
+			_maxLeft = _options.maxLeft;
+		}
+		
+		if (_options.maxUp != null) 
+		{
+			_maxUp = _options.maxUp;
+		}
+		
+		if (_options.maxDown != null) 
+		{
+			_maxDown = _options.maxDown;
+		}
+		
+		if (_options.friction != null) 
+		{
+			_friction = _options.friction;
+		}
+		
+		super(_options);
+		
+	}
+	
+	override function init()
+	{
+		try
+		{
+			_view = cast(entity, Sprite);
+		}
+		catch (e:Dynamic)
+		{
+			return;
+		}
+	}
+	
+	override function update(dt:Float)
+	{
+        _updateSpeed(dt);
+        _updateMove(dt);
+	}
+	
+	function _updateSpeed(delta:Float)
+	{
+		if (_view == null) return;
+		
+		moving = false;
+		
+		if (Luxe.input.inputdown('left'))
+		{
+			velocity.x -= _acceleration.x;
+			_view.flipx = true;
+			moving = true;
+		}
+		else if (Luxe.input.inputdown('right'))
+		{
+			velocity.x += _acceleration.x;
+			_view.flipx = false;
+			moving = true;
+		}
+		else 
+		{
+			velocity.x *= _friction;
+		}
+
+		if (Luxe.input.inputdown('up'))
+		{
+			velocity.y -= _acceleration.y;
+			moving = true;
+		}
+		else if(Luxe.input.inputdown('down'))
+		{
+			velocity.y += _acceleration.y;
+			moving = true;
+		}
+		else 
+		{
+			velocity.y *= _friction;
+		}
+		
+		velocity.x = MathUtil.clamp(velocity.x, -_maxVelocity.x, _maxVelocity.x);
+		velocity.y = MathUtil.clamp(velocity.y, -_maxVelocity.y, _maxVelocity.y);
+	}
+	
+	function _updateMove(delta:Float)
+	{
+		_view.pos.x += velocity.x * delta;
+		_view.pos.y += velocity.y * delta;
+		
+		_view.pos.y = MathUtil.clamp(_view.pos.y, _maxUp, _maxDown);
+		_view.pos.x = MathUtil.clamp(_view.pos.x, _maxLeft, _maxRight);
+	}
+	
+	function get_velocity():Vector 
+	{
+		return velocity;
+	}
+	
+	function set_velocity(value:Vector):Vector 
+	{
+		return velocity = value;
+	}
+	
+	function get_moving():Bool 
+	{
+		return moving;
+	}
+	
+}

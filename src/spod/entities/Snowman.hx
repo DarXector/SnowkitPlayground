@@ -25,7 +25,7 @@ class Snowman extends Sprite
 		this.add(new DepthManager( {
 			name: "depth_manager", 
 			
-			horizonY: Luxe.screen.h / 3,
+			focalY: Luxe.screen.h / 3,
 			
 			scale: true,
 			
@@ -40,6 +40,8 @@ class Snowman extends Sprite
 			color: new Color(0.8, 0.89, 1),
 			
 			blur: 8,
+			
+			parallax:true
 		}));
 	}
 }
