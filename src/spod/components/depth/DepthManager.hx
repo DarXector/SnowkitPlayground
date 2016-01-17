@@ -19,28 +19,28 @@ class DepthManager extends Component
 	
 	var _view:Sprite;
 	
-	var _updateOverlap:Bool;
+	var _doOverlap:Bool;
 	
-	var _updateScale:Bool;
+	var _doScale:Bool;
 	
 	var _minScale:Float = 0.3;
 	var _maxScale:Float = 1;
 	var _originalOrigin:Vector;
 	var _originalSize:Vector;
 	
-	var _updateColor:Bool;
+	var _doColor:Bool;
 	var _targetColor:Color;
 	
-	var _updateBrightness:Bool;
+	var _doBrightness:Bool;
 	var _minBrightness:Float = 0.1;
 	var _maxBrightness:Float = 1;
 	
 	var _depthShader:Shader;
 	
-	var _updateBlur:Bool;
+	var _doBlur:Bool;
 	var _blurModifier:Float = 0;
 	
-	var _updateParallax:Bool;
+	var _doParallax:Bool;
 	
 	var _moverComponent:Mover;
 	var _cameraPosition:Vector;
@@ -54,12 +54,12 @@ class DepthManager extends Component
 		
 		if (_options.overlap) 
 		{
-			_updateOverlap = _options.overlap;
+			_doOverlap = _options.overlap;
 		}
 		
 		if (_options.scale != null) 
 		{
-			_updateScale = _options.scale;
+			_doScale = _options.scale;
 			if (_options.minScale != null)
 			{
 				_minScale = _options.minScale;
@@ -72,13 +72,13 @@ class DepthManager extends Component
 		
 		if (_options.color != null) 
 		{
-			_updateColor = (_options.color != null);
+			_doColor = (_options.color != null);
 			_targetColor = _options.color;
 		}
 		
 		if (_options.brightness != null) 
 		{
-			_updateBrightness = _options.brightness;
+			_doBrightness = _options.brightness;
 			
 			if (_options.minBrightness != null)
 			{
@@ -92,13 +92,13 @@ class DepthManager extends Component
 		
 		if (_options.blur != null) 
 		{
-			_updateBlur = (_options.blur != null);
+			_doBlur = (_options.blur != null);
 			_blurModifier = _options.blur;
 		}
 		
 		if (_options.parallax != null)
 		{
-			_updateParallax = _options.parallax;
+			_doParallax = _options.parallax;
 			if (_options.camerPosition != null)
 			{
 				_cameraPosition = _options.camerPosition;
@@ -123,13 +123,13 @@ class DepthManager extends Component
 			return;
 		}
 		
-		if (_updateScale)
+		if (_doScale)
 		{
 			_originalOrigin = new Vector(_view.origin.x, _view.origin.y);
 			_originalSize = new Vector(_view.size.x, _view.size.y);
 		}
 		
-		if (_updateBlur || _updateBrightness || _updateColor)
+		if (_doBlur || _doBrightness || _doColor)
 		{
 			_depthShader = Luxe.resources.shader('depth').clone("depth_" + _view.name);
 			
@@ -144,7 +144,7 @@ class DepthManager extends Component
 			_view.shader = _depthShader;
 		}
 		
-		if (_updateParallax)
+		if (_doParallax)
 		{
 			_moverComponent = cast entity.get("mover");
 			
@@ -169,47 +169,75 @@ class DepthManager extends Component
 		var destDepth = (_view.pos.y - _focalY) / (Luxe.screen.h - _focalY);
 		var destDepthSqrt = Math.sqrt(destDepth);
 
-		if (_updateOverlap)
+		if (_doOverlap)
 		{
-			_view.depth = destDepth;
+			_updateOvelay(destDepth);
 		}
 		
-		if (_updateScale)
+		if (_doScale)
 		{
-			var depthScale = _getDepthScale(destDepth);
-			_view.size = new Vector(_originalSize.x * depthScale, _originalSize.y * depthScale);
-			_view.origin = new Vector(_originalOrigin.x * depthScale, _originalOrigin.y * depthScale);
+			_updateScale(destDepth);
 		}
 		
-		if (_updateColor)
+		if (_doColor)
 		{
-			var depthColorModifier = 1 - destDepthSqrt;
+			_updateColor(destDepthSqrt);
+		}
+		
+		if (_doBrightness)
+		{
+			_updateBrightness(destDepthSqrt);
+		}
+		
+		if (_doBlur)
+		{
+			_updateBlur(destDepthSqrt);
+		}
+		
+		if (_doParallax)
+		{
+			_updateParallax(destDepth);
+		}
+	}
+	
+	function _updateParallax(destDepth:Float) 
+	{
+		var pDepthScale = _getDepthScale(destDepth);
 			
-			_depthShader.set_vector3("u_color", new Vector(depthColorModifier * _targetColor.r, depthColorModifier * _targetColor.g, depthColorModifier * _targetColor.b));
-		}
-		
-		if (_updateBrightness)
+		if (_moverComponent != null)
 		{
-			var depthBrightnessModifier = _minBrightness + ((1 - destDepthSqrt) * (_maxBrightness - _minBrightness));
-				
-			_depthShader.set_float("u_brightness", depthBrightnessModifier);
+			_moverComponent.velocity.x *= Math.sqrt(Math.sqrt(pDepthScale));
+			_moverComponent.velocity.y *= Math.sqrt(Math.sqrt(pDepthScale));
 		}
-		
-		if (_updateBlur)
-		{
-			_depthShader.set_float("u_blur", _blurModifier * (1.0 - destDepthSqrt) / 1000);
-		}
-		
-		if (_updateParallax)
-		{
-			var pDepthScale = _getDepthScale(destDepth);
-			
-			if (_moverComponent != null)
-			{
-				_moverComponent.velocity.x *= Math.sqrt(Math.sqrt(pDepthScale));
-				_moverComponent.velocity.y *= Math.sqrt(Math.sqrt(pDepthScale));
-			}
-		}
+	}
+	
+	inline function _updateBlur(destDepthSqrt:Float) 
+	{
+		_depthShader.set_float("u_blur", _blurModifier * (1.0 - destDepthSqrt) / 1000);
+	}
+	
+	inline function _updateOvelay(destDepth:Float) 
+	{
+		_view.depth = destDepth;
+	}
+	
+	function _updateBrightness(destDepthSqrt:Float) 
+	{
+		var depthBrightnessModifier = _minBrightness + ((1 - destDepthSqrt) * (_maxBrightness - _minBrightness));	
+		_depthShader.set_float("u_brightness", depthBrightnessModifier);
+	}
+	
+	function _updateColor(destDepthSqrt:Float) 
+	{
+		var depthColorModifier = 1 - destDepthSqrt;
+		_depthShader.set_vector3("u_color", new Vector(depthColorModifier * _targetColor.r, depthColorModifier * _targetColor.g, depthColorModifier * _targetColor.b));
+	}
+	
+	function _updateScale(destDepth:Float)
+	{
+		var depthScale = _getDepthScale(destDepth);
+		_view.size = new Vector(_originalSize.x * depthScale, _originalSize.y * depthScale);
+		_view.origin = new Vector(_originalOrigin.x * depthScale, _originalOrigin.y * depthScale);
 	}
 	
 	inline function _getDepthScale(destDepth:Float):Float
