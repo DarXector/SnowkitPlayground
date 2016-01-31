@@ -5,6 +5,11 @@ import phoenix.Shader;
 import luxe.Color;
 import luxe.Vector;
 
+enum ScaleType {
+	MinMax;
+	EyeLevel;
+}
+
 
 typedef DepthOptions = {
 
@@ -12,9 +17,13 @@ typedef DepthOptions = {
 
     @:optional var overlap : Bool;
 	
-    @:optional var focalY : Float;
+    @:optional var vanishingPointY : Float;
+	
+    @:optional var eyeLevel : Float;
 
     @:optional var scale : Bool;
+	
+    @:optional var scaleType : ScaleType;
 	
     @:optional var minScale : Float;
 	

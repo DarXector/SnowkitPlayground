@@ -4,6 +4,7 @@ import luxe.Color;
 import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import spod.components.depth.DepthManager;
+import spod.components.depth.DepthOptions.ScaleType;
 
 import hxmath.math.MathUtil;
 
@@ -25,14 +26,16 @@ class Snowman extends Sprite
 		this.add(new DepthManager( {
 			name: "depth_manager", 
 			
-			focalY: Luxe.screen.h / 3,
+			vanishingPointY: Luxe.screen.h / 3,
 			
 			scale: true,
+			/*scaleType: ScaleType.MinMax,
+			minScale: 0.25,
+			maxScale: 1,*/
+			scaleType: ScaleType.EyeLevel,
+			eyeLevel: Luxe.screen.h / 3,
 			
 			overlap: true,
-			
-			minScale: 0.25,
-			maxScale: 1,
 			
 			brightness: true,
 			minBrightness: 0.1,

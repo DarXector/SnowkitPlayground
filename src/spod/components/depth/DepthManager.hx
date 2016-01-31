@@ -15,7 +15,9 @@ import spod.components.mover.Mover;
  */
 class DepthManager extends Component
 {
-	var _focalY: Float = 0;
+	var _vanishingPointY: Float = 0;
+	
+	var _eyeLevel: Float = 0;
 	
 	var _view:Sprite;
 	
@@ -44,12 +46,15 @@ class DepthManager extends Component
 	
 	var _moverComponent:Mover;
 	var _cameraPosition:Vector;
+	
+	var _scaleType:ScaleType;
+	var _currentDepthScale:Float = 1;
 
 	public function new(_options:DepthOptions)
 	{
-		if (_options.focalY != null) 
+		if (_options.vanishingPointY != null) 
 		{
-			_focalY = _options.focalY;
+			_vanishingPointY = _options.vanishingPointY;
 		}
 		
 		if (_options.overlap) 
@@ -60,13 +65,26 @@ class DepthManager extends Component
 		if (_options.scale != null) 
 		{
 			_doScale = _options.scale;
-			if (_options.minScale != null)
+			
+			_scaleType = _options.scaleType;
+			
+			if (_scaleType == ScaleType.MinMax)
 			{
-				_minScale = _options.minScale;
+				if (_options.minScale != null)
+				{
+					_minScale = _options.minScale;
+				}
+				if (_options.maxScale != null)
+				{
+					_maxScale = _options.maxScale;
+				}
 			}
-			if (_options.maxScale != null)
+			else 
 			{
-				_maxScale = _options.maxScale;
+				if (_options.eyeLevel != null) 
+				{
+					_eyeLevel = _options.eyeLevel;
+				}
 			}
 		}
 		
@@ -148,7 +166,7 @@ class DepthManager extends Component
 		{
 			_moverComponent = cast entity.get("mover");
 			
-			var pDepthScale = _getDepthScale((_view.pos.y - _focalY) / (Luxe.screen.h - _focalY));
+			var pDepthScale = _getDepthScale((_view.pos.y - _vanishingPointY) / (Luxe.screen.h - _vanishingPointY));
 
 			_view.pos.x = (_view.pos.x - _cameraPosition.x) * pDepthScale + _cameraPosition.x;
 		}
@@ -166,8 +184,10 @@ class DepthManager extends Component
 		if (_view == null)
 			return;
 
-		var destDepth = (_view.pos.y - _focalY) / (Luxe.screen.h - _focalY);
+		var destDepth = (_view.pos.y - _vanishingPointY) / (Luxe.screen.h - _vanishingPointY);
 		var destDepthSqrt = Math.sqrt(destDepth);
+		
+		_currentDepthScale = _getDepthScale(destDepth);
 
 		if (_doOverlap)
 		{
@@ -202,12 +222,13 @@ class DepthManager extends Component
 	
 	function _updateParallax(destDepth:Float) 
 	{
-		var pDepthScale = _getDepthScale(destDepth);
-			
 		if (_moverComponent != null)
 		{
-			_moverComponent.velocity.x *= Math.sqrt(Math.sqrt(pDepthScale));
-			_moverComponent.velocity.y *= Math.sqrt(Math.sqrt(pDepthScale));
+			if (_moverComponent.moving)
+			{
+				_moverComponent.velocity.x *= Math.sqrt(Math.sqrt(_currentDepthScale));
+				_moverComponent.velocity.y *= Math.sqrt(Math.sqrt(_currentDepthScale));
+			}
 		}
 	}
 	
@@ -235,13 +256,20 @@ class DepthManager extends Component
 	
 	function _updateScale(destDepth:Float)
 	{
-		var depthScale = _getDepthScale(destDepth);
-		_view.size = new Vector(_originalSize.x * depthScale, _originalSize.y * depthScale);
-		_view.origin = new Vector(_originalOrigin.x * depthScale, _originalOrigin.y * depthScale);
+		_view.size = new Vector(_originalSize.x * _currentDepthScale, _originalSize.y * _currentDepthScale);
+		_view.origin = new Vector(_originalOrigin.x * _currentDepthScale, _originalOrigin.y * _currentDepthScale);
 	}
 	
-	inline function _getDepthScale(destDepth:Float):Float
+	function _getDepthScale(destDepth:Float):Float
 	{
-		return _minScale + (destDepth * (_maxScale - _minScale));
+		if (_scaleType == ScaleType.MinMax)
+		{
+			return _minScale + (destDepth * (_maxScale - _minScale));
+		} 
+		else if (_scaleType == ScaleType.EyeLevel && _eyeLevel > 0) 
+		{
+			return destDepth * ((Luxe.screen.h - _vanishingPointY) / _eyeLevel);
+		}
+		return 1;
 	}
 }

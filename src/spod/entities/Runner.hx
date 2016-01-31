@@ -6,6 +6,7 @@ import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import phoenix.Vector;
 import spod.components.depth.DepthManager;
+import spod.components.depth.DepthOptions.ScaleType;
 import spod.components.mover.Mover;
 
 import hxmath.math.MathUtil;
@@ -32,11 +33,7 @@ class Runner extends Sprite
 			name: "mover", 
 			maxVelocity: new Vector(256, 128),
 			acceleration: new Vector(10, 5),
-			maxUp: Luxe.screen.h / 3,
-			maxDown: Luxe.screen.h,
-			maxRight: Luxe.screen.w - 64,
-			maxLeft: 64,
-			friction: 0.90
+			friction: 0.8
 		});
 		
 		this.add(_moverComponent);
@@ -44,15 +41,18 @@ class Runner extends Sprite
 		this.add(new DepthManager( {
 			name: "depth_manager", 
 			
-			focalY: Luxe.screen.h / 3,
+			vanishingPointY: Luxe.screen.h / 3,
 			
 			scale: true,
+			//scaleType: ScaleType.MinMax,
+			//minScale: 0.25,
+			//maxScale: 1,
+			scaleType: ScaleType.EyeLevel,
+			eyeLevel: Luxe.screen.h / 3,
+			
 			parallax: true,
 			
 			overlap: true,
-			
-			minScale: 0.25,
-			maxScale: 1,
 			
 			brightness: true,
 			minBrightness: 0.1,

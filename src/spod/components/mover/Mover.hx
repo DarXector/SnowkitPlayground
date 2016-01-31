@@ -39,26 +39,6 @@ class Mover extends Component
 			_maxVelocity = _options.maxVelocity;
 		}
 		
-		if (_options.maxRight != null) 
-		{
-			_maxRight = _options.maxRight;
-		}
-		
-		if (_options.maxLeft != null) 
-		{
-			_maxLeft = _options.maxLeft;
-		}
-		
-		if (_options.maxUp != null) 
-		{
-			_maxUp = _options.maxUp;
-		}
-		
-		if (_options.maxDown != null) 
-		{
-			_maxDown = _options.maxDown;
-		}
-		
 		if (_options.friction != null) 
 		{
 			_friction = _options.friction;
@@ -124,6 +104,9 @@ class Mover extends Component
 			velocity.y *= _friction;
 		}
 		
+		velocity.x = Math.fround(velocity.x * 10) / 10;
+		velocity.y = Math.fround(velocity.y * 10) / 10;
+		
 		velocity.x = MathUtil.clamp(velocity.x, -_maxVelocity.x, _maxVelocity.x);
 		velocity.y = MathUtil.clamp(velocity.y, -_maxVelocity.y, _maxVelocity.y);
 	}
@@ -133,8 +116,7 @@ class Mover extends Component
 		_view.pos.x += velocity.x * delta;
 		_view.pos.y += velocity.y * delta;
 		
-		_view.pos.y = MathUtil.clamp(_view.pos.y, _maxUp, _maxDown);
-		_view.pos.x = MathUtil.clamp(_view.pos.x, _maxLeft, _maxRight);
+		trace("_view.pos.y " + _view.pos.y + " velocity.y " + velocity.y + " _acceleration.y " + _acceleration.y);
 	}
 	
 	function get_velocity():Vector 
