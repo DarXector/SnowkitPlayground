@@ -115,8 +115,6 @@ class Mover extends Component
 	{
 		_view.pos.x += velocity.x * delta;
 		_view.pos.y += velocity.y * delta;
-		
-		trace("_view.pos.y " + _view.pos.y + " velocity.y " + velocity.y + " _acceleration.y " + _acceleration.y);
 	}
 	
 	function get_velocity():Vector 

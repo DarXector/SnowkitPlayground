@@ -1,12 +1,23 @@
 package;
 
+import luxe.Color;
 import luxe.Input;
+import mint.focus.Focus;
+import spod.AutoCanvas;
 import spod.SixPrinciplesOfDepth;
+import mint.render.luxe.LuxeMintRender;
+import mint.layout.margins.Margins;
+import mint.Canvas;
 
 class Main extends luxe.Game
 {
 
 	var sixPrinciplesOfDepth:SixPrinciplesOfDepth;
+	
+	public static var canvas: Canvas;
+    public static var rendering: LuxeMintRender;
+    public static var layout: Margins;
+	public static var focus: Focus;
 
 	override function config(config:luxe.AppConfig)
 	{
@@ -21,6 +32,22 @@ class Main extends luxe.Game
 
 	override function ready()
 	{
+		rendering = new LuxeMintRender();
+        layout = new Margins();
+		
+		var auto_canvas = new AutoCanvas({
+            name:'canvas',
+            rendering: rendering,
+            options: { color:new Color(1,1,1,0.0) },
+            x: 0, y:0, w: 960, h: 640
+        });
+
+        auto_canvas.auto_listen();
+        canvas = auto_canvas;
+        
+            //this is required to handle input focus in the default way
+        focus = new Focus(canvas);
+		
 		Luxe.input.bind_key('left', Key.left);
 		Luxe.input.bind_key('left', Key.key_a);
 

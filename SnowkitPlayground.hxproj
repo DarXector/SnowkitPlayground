@@ -17,13 +17,14 @@
   <classpaths>
     <class path="D:\HaxeToolkit\haxe\lib\luxe\git" />
     <class path="D:\HaxeToolkit\haxe\lib\hxmath\0,13,0" />
+    <class path="D:\HaxeToolkit\haxe\lib\mint\git" />
     <class path="D:\HaxeToolkit\haxe\lib\snow\git" />
     <class path="src" />
     <class path="bin\web.build\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="no-compilation&#xA;web&#xA;arch-web&#xA;source-map-content&#xA;debug&#xA;hxcpp_static_std&#xA;snow_module_audio_howlerjs&#xA;luxe_web&#xA;snow_web&#xA;luxe&#xA;hxmath&#xA;snow" />
+    <option directives="no-compilation&#xA;web&#xA;arch-web&#xA;source-map-content&#xA;debug&#xA;hxcpp_static_std&#xA;snow_module_audio_howlerjs&#xA;luxe_web&#xA;snow_web&#xA;luxe&#xA;hxmath&#xA;mint&#xA;snow" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="LuxeApp" />
