@@ -13,9 +13,11 @@ import mint.Panel;
 import mint.Scroll;
 import mint.Slider;
 import mint.types.Types.TextAlign;
+import model.ModelLocator;
 import phoenix.geometry.Geometry;
 import spod.entities.Runner;
 import spod.entities.Snowman;
+import spod.model.SPODModel;
 
 import luxe.utils.Random;
 
@@ -35,8 +37,12 @@ class SixPrinciplesOfDepth extends Scene
     var progress: Progress;
     var canvas: Canvas;
 	
+	var _model:SPODModel;
+	
 	public function new(?_name:String='untitled scene')
 	{
+		_model = ModelLocator.instance().spodModel;
+		
 		super(_name);
 	}
 
@@ -107,67 +113,73 @@ class SixPrinciplesOfDepth extends Scene
 			closable: false
         });
 		
-		new mint.Label({
-            parent: window,
-            name: 'labelmain',
-            x:10, y:20, w:100, h:32,
-            text: 'hello mint',
-            align:left,
-            text_size: 14,
-            onclick: function(e,c) {trace('hello mint! ${Luxe.time}' );}
-        });
+		inline function make_checkbox(_n,_x,_y,_w,_h,_t,_onchange) {
 
-        check = new mint.Checkbox({
-            parent: window,
-            name: 'check1',
-            x: 120, y: 20, w: 24, h: 24,
-			onchange: function(s, p) {
-				trace("state: " + s + " previous: " + p);
-			}
-        });
+            new mint.Label({
+				parent: window,
+				name: "lb_" + _n,
+				x:_x, y:_y, w:_w, h:_h,
+				text: _t,
+				align:left,
+				text_size: 14
+			});
 
-        new mint.Checkbox({
-            parent: window,
-            name: 'check2',
-            options: {
-                color_node: new Color().rgb(0xf6007b),
-                color_node_off: new Color().rgb(0xcecece),
-                color: new Color().rgb(0xefefef),
-                color_hover: new Color().rgb(0xffffff),
-                color_node_hover: new Color().rgb(0xe2005a)
-            },
-            x: 150, y: 20, w: 24, h: 24,
-			onchange: function(s, p) {
-				trace("state: " + s + " previous: " + p);
-			}
-        });
-
-        inline function make_slider(_n,_x,_y,_w,_h,_c,_min,_max,_initial,_step:Null<Float>,_vert) {
-
+			new mint.Checkbox({
+				parent: window,
+				name: "cb_" + _n,
+				x: _x + _w + 5, y: _y + 7, w: 20, h: 20,
+				onchange: _onchange
+			});
+        }
+		
+		inline function make_slider(_n, _x, _y, _min, _max,
+			_initial, _step:Null<Float>, _vert, _onslchange) 
+		{			
             var _s = new mint.Slider({
-                parent: window, name: _n, x:_x, y:_y, w:_w, h:_h,
-                options: { color_bar:new Color().rgb(_c) },
-                min: _min, max: _max, step: _step, vertical:_vert, value:_initial
+                parent: window, 
+				name: "sl_" + _n, 
+				x: _x, y: _y, w: 100, h: 20,
+                options: { color_bar:new Color().rgb(0x9dca63) },
+                min: _min, max: _max, 
+				step: _step, vertical: _vert, 
+				value: _initial
             });
+			
+			_s.onchange.listen(_onslchange);
 
             var _l = new mint.Label({
-                parent:_s, text_size:12, x:0, y:0, w:_s.w, h:_s.h,
-                align: TextAlign.center, align_vertical: TextAlign.center,
-                name : _s.name+'.label', text: '${_s.value}'
+                parent: _s, 
+				text_size: 12, 
+				x: 0, y: 0, w: _s.w, h: _s.h,
+                align: TextAlign.center, 
+				align_vertical: TextAlign.center,
+                name : _s.name+'.label', 
+				text: '${_s.value}'
             });
 
-            _s.onchange.listen(function(_val,_) { _l.text = '$_val'; });
+        }
+		
+		make_checkbox("overlap", 10, 25, 60, 32, "Overlap", 
+		function(s, p) {
+				_model.overlap = s;
+		});
+		
+		make_checkbox("parallax", 10, 50, 60, 32, "Parallax", 
+		function(s, p) {
+				_model.parallax = s;
+		});
+		
+		make_checkbox("vp", 110, 25, 100, 32, "Vanishing Point", 
+		function(s, p) {
+				_model.toggleVanishingPoint(s);
+		});
+		
+		make_slider('vp', 240, 32, 0, Luxe.screen.h, Luxe.screen.h / 3, 5, false,
+		function(v, p) {
+				_model.vanishingPointY = v;
+		});
 
-        } //make_slider
-
-        make_slider('slider1', 14, 20, 32, 128, 0x9dca63, -100, 100, 0, 10, true);
-        make_slider('slider2', 56, 20, 32, 128, 0xf6007b, 0, 100, 50, 1, true);
-        make_slider('slider3', 98, 20, 32, 128, 0x9dca63, null, null, null, null, true);
-
-        make_slider('slider4', 140, 20, 32, 128, 0xf6007b, 0, 100, 20, 10, true);
-        make_slider('slider5', 182, 20, 32, 128, 0x9dca63, 0, 100, 0.3, 1, true);
-        make_slider('slider6', 224, 20, 32, 128, 0xf6007b, null, null, null, null, true);
-	}
+    }
 
 	override function reset()
 	{

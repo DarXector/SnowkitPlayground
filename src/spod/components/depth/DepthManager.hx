@@ -117,14 +117,8 @@ class DepthManager extends Component
 		if (_options.parallax != null)
 		{
 			_doParallax = _options.parallax;
-			if (_options.camerPosition != null)
-			{
-				_cameraPosition = _options.camerPosition;
-			} 
-			else
-			{
-				_cameraPosition = new Vector(Luxe.screen.w / 2, Luxe.screen.h / 2);
-			}
+			
+			_cameraPosition = new Vector(Luxe.screen.w / 2, Luxe.screen.h / 2);
 		}
 		
 		super(_options);

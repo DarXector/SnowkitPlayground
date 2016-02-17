@@ -18,8 +18,6 @@ typedef DepthOptions = {
     @:optional var overlap : Bool;
 	
     @:optional var vanishingPointY : Float;
-	
-    @:optional var eyeLevel : Float;
 
     @:optional var scale : Bool;
 	
@@ -29,9 +27,9 @@ typedef DepthOptions = {
 	
     @:optional var maxScale : Float;
 	
-	@:optional var parallax:Bool;
+	@:optional var eyeLevel : Float;
 	
-	@:optional var camerPosition:Vector;
+	@:optional var parallax:Bool;
 	
 	@:optional var color:Color;
 	
